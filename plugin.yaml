@@ -1,0 +1,14 @@
+name: wait
+shortDesc: Wait for a resource to be ready
+usage: kubectl plugin wait RESOURCE/NAME
+example: |
+  kubectl plugin wait po/mypod
+  kubectl plugin wait deploy/mydeploy
+command: "./wait"
+flags:
+  - name: timeout
+    desc: timeout
+    defValue: 5m
+  - name: interval
+    desc: interval
+    defValue: 2s
