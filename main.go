@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/kubectl/pkg/pluginutils"
@@ -75,7 +73,21 @@ func waitOrDie(resourceType, resourceName string, timeout, interval time.Duratio
 				if err != nil {
 					return false, err
 				}
-				return IsPodReady(p), nil
+				return isPodReady(p), nil
+
+			})
+		if err != nil {
+			fmt.Printf("error: %s", err)
+			os.Exit(-1)
+		}
+	case "deploy", "deployment":
+		err := wait.PollImmediate(interval, timeout,
+			func() (bool, error) {
+				d, err := getDeployment(client, ns, resourceName)
+				if err != nil {
+					return false, err
+				}
+				return isDeploymentReady(d), nil
 
 			})
 		if err != nil {
@@ -96,8 +108,4 @@ func loadConfig() (*kubernetes.Clientset, string) {
 	c := kubernetes.NewForConfigOrDie(restConfig)
 	ns, _, _ := kubeConfig.Namespace()
 	return c, ns
-}
-
-func getPod(client *kubernetes.Clientset, ns, podName string) (*corev1.Pod, error) {
-	return client.CoreV1().Pods(ns).Get(podName, metav1.GetOptions{})
 }

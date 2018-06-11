@@ -18,7 +18,15 @@ Copied from https://github.com/kubernetes/helm/blob/4e5139b67c53bc87271e456cbd65
 
 package main
 
-import "k8s.io/api/core/v1"
+import (
+	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+)
+
+func getPod(client *kubernetes.Clientset, ns, name string) (*v1.Pod, error) {
+	return client.CoreV1().Pods(ns).Get(name, metav1.GetOptions{})
+}
 
 // These functions are adapted from the "kubernetes" repository's file
 //
@@ -27,8 +35,8 @@ import "k8s.io/api/core/v1"
 // where they rely upon the API types specific to that repository. Here we recast them to operate
 // upon the type from the "client-go" repository instead.
 
-// IsPodReady returns true if a pod is ready; false otherwise.
-func IsPodReady(pod *v1.Pod) bool {
+// isPodReady returns true if a pod is ready; false otherwise.
+func isPodReady(pod *v1.Pod) bool {
 	return isPodReadyConditionTrue(pod.Status)
 }
 
