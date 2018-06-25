@@ -94,6 +94,19 @@ func waitOrDie(resourceType, resourceName string, timeout, interval time.Duratio
 			fmt.Printf("error: %s", err)
 			os.Exit(-1)
 		}
+	case "svc", "service":
+		err := wait.PollImmediate(interval, timeout,
+			func() (bool, error) {
+				s, err := getService(client, ns, resourceName)
+				if err != nil {
+					return false, err
+				}
+				return isServiceReady(s), nil
+			})
+		if err != nil {
+			fmt.Printf("error: %v", err)
+			os.Exit(-1)
+		}
 	default:
 		fmt.Printf("unsupported resource type: %s\n", resourceType)
 		os.Exit(1)

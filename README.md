@@ -8,6 +8,7 @@ kubectl plugin wait po/mypod
 **Supported Resource Types**
 * pods
 * deployments
+* services
 
 ## Install the plugin
 ```console
