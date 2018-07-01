@@ -3,7 +3,8 @@ shortDesc: Wait for a resource to be ready
 usage: kubectl plugin wait RESOURCE/NAME
 example: |
   kubectl plugin wait po/mypod
-  kubectl plugin wait deploy/mydeploy
+  kubectl plugin wait deploy/mydeployment
+  kubectl plugin wait svc/myservice
 command: "./wait"
 flags:
   - name: timeout
